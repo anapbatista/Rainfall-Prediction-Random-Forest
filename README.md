@@ -1,6 +1,4 @@
-# Previsão de Chuva em São Carlos com Random Forest
-
-Projeto desenvolvido para a disciplina SCC0230 — Inteligência Artificial.
+# Previsão de Chuva em São Carlos com Random Forest, XGBoost e MLP
 
 ---
 
@@ -25,7 +23,7 @@ Fonte oficial:
 
 * Período: 2006–2025
 * Dados horários da estação de São Carlos
-* Dataset final diário com 6998 registros
+* Dataset final diário com 7210 registros
 
 ## Tratamento realizado
 
@@ -38,29 +36,33 @@ Fonte oficial:
 
 # Modelo
 
-Foi utilizado um **Random Forest Classifier** com:
+Foram implementados e comparados quatro modelos de classificação para prever a ocorrência de chuva, visando encontrar o melhor equilíbrio entre acurácia e sensibilidade (Recall):
 
-```python
-class_weight='balanced'
-n_estimators=100
-```
-
-Motivos da escolha:
-
-* Robustez
-* Bom desempenho em dados tabulares
-* Resistência a overfitting
-* Importância das variáveis
+1. **Random Forest Classifier**: Utilizado com `class_weight='balanced'` e `n_estimators=100`. Escolhido por sua robustez a ruídos e capacidade de ranquear a importância das variáveis.
+2. **XGBoost**: Configurado com `scale_pos_weight` para tratar o desbalanceamento dos dados.
+3. **MLP (Rede Neural)**: Uma rede neural de múltiplas camadas para capturar padrões complexos não-lineares.
+4. **Regressão Logística Polinomial (Grau 2)**: Utilizada para capturar as interações entre variáveis climáticas que um modelo puramente linear ignoraria.
 
 ---
 
 # Resultados
 
-## Acurácia
+## Comparativo de Performance
 
-```text
-0.84
-```
+| Modelo | Acurácia | Recall (Chuva) | F1-Score |
+| :--- | :---: | :---: | :---: |
+| Random Forest | 0.84 | 0.73 | 0.76 |
+| XGBoost | 0.84 | 0.84 | 0.79 |
+| MLP (Neural Net) | 0.84 | 0.78 | 0.77 |
+| **Logística Polinomial** | **0.84** | **0.86** | **0.79** |
+
+## Conclusões dos Resultados
+
+* **Recall Superior**: O modelo de **Regressão Logística Polinomial** apresentou a melhor sensibilidade (**0.86**), sendo o mais eficaz em identificar corretamente os dias de chuva.
+* **Estabilidade**: A validação cruzada confirmou que o modelo polinomial é estável, com acurácia média de **0.839**.
+* **Poder de Discriminação**: A curva ROC-AUC do modelo polinomial atingiu **0.924**, superando os demais modelos e demonstrando excelente capacidade de separação entre as classes.
+
+---
 
 ## Variáveis mais importantes
 
@@ -103,9 +105,12 @@ jupyter notebook
 
 ```text
 .
-├── Trabalho_IA.ipynb
-├── dados_sao_carlos_unificados.csv
-├── dados_sao_carlos_diario.csv
+├── Rainfall_Predicition_Sao_Carlos.ipynb
+├── data/
+        ├── sao_carlos_part_1.csv
+        ├── sao_carlos_part_2.csv
+        ├── sao_carlos_part_3.csv
+        ├── sao_carlos_part_4.csv
 └── README.md
 ```
 
@@ -114,4 +119,6 @@ jupyter notebook
 # Disciplina
 
 SCC0230 — Inteligência Artificial
+SCC0276 - Aprendizado de Máquina
+
 Universidade de São Paulo — Instituto de Ciências Matemáticas e de Computação
